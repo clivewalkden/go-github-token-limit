@@ -37,6 +37,19 @@ archives:
       - goos: windows
         format: zip
 
+brews:
+  - name: github-token-limit
+    ids:
+      - github-token-limit
+    repository:
+      owner: clivewalkden
+      name: homebrew-github-token-limit
+    homepage: https://github.com/clivewalkden/homebrew-github-token-limit
+    description: This executable returns the number of requests remaining for the GitHub API. If there are no tokens left it gives the reset time.
+    commit_author:
+      name: Clive Walkden
+      email: clivewalkden@gmail.com
+
 changelog:
   sort: asc
   use: github
