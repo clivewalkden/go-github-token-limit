@@ -14,24 +14,35 @@ before:
     - go mod tidy
 
 builds:
-  - main: ./cmd/main.go
+  - id: github-token-limit
+    main: ./cmd/main.go
+    binary: github-token-limit
     env:
       - CGO_ENABLED=0
     goos:
       - linux
       - windows
       - darwin
+    goarch:
+      - 386
+      - amd64
+      - arm
+      - arm64
+    goarm:
+      - 6
+      - 7
+    ignore:
+      - goos: darwin
+        goarch: 386
+      - goos: linux
+        goarch: arm
+        goarm: 6
 
 archives:
-  - format: tar.gz
-    # this name template makes the OS and Arch compatible with the results of `uname`.
-    name_template: >-
-      {{ .ProjectName }}_
-      {{- title .Os }}_
-      {{- if eq .Arch "amd64" }}x86_64
-      {{- else if eq .Arch "386" }}i386
-      {{- else }}{{ .Arch }}{{ end }}
-      {{- if .Arm }}v{{ .Arm }}{{ end }}
+  - id: github-token-limit
+    builds:
+      - github-token-limit
+    format: tar.gz
     # use zip for windows archives
     format_overrides:
       - goos: windows
