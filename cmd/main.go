@@ -33,7 +33,7 @@ func main() {
 	} else {
 		now := time.Now()
 		durationUntilReset := resetTime.Sub(now).Minutes()
-		utils.InfoNotice(fmt.Sprintf("     You have no requests left. The limit will reset in %.0f minute at %s", durationUntilReset, resetTime))
+		utils.InfoNotice(fmt.Sprintf("     You have no requests left. The limit will reset in %.0f minutes at %s", durationUntilReset, resetTime))
 	}
 	println("")
 }

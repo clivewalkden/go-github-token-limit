@@ -22,7 +22,10 @@ func TestFetchRateLimit(t *testing.T) {
 			},
 		}
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(response)
+		err := json.NewEncoder(w).Encode(response)
+		if err != nil {
+			t.Fatalf("Failed to encode JSON response: %v", err)
+		}
 	}))
 	defer mockServer.Close()
 
@@ -63,7 +66,10 @@ func TestFetchRateLimitReached(t *testing.T) {
 			},
 		}
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(response)
+		err := json.NewEncoder(w).Encode(response)
+		if err != nil {
+			t.Fatalf("Failed to encode JSON response: %v", err)
+		}
 	}))
 	defer mockServer.Close()
 
