@@ -14,7 +14,7 @@ func main() {
 	fmt.Print("\033[H\033[2J") //clear screen
 
 	utils.InfoNotice(`                   GitHub Token Limit Checker                   `)
-	utils.InfoNotice(`                             v1.0.0                             `)
+	utils.InfoNotice(`                             v1.1.0                             `)
 	println("") // This is a placeholder for the main function
 
 	client := &http.Client{}
