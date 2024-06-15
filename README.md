@@ -6,6 +6,8 @@
 
 This executable returns the number of requests remaining for the GitHub API. If there are no tokens left it gives the reset time.
 
+The application assumes the ENV variable `GITHUB_TOKEN` is set with a valid GitHub token and uses that to return the quota data for.
+
 ## Installation
 
 ### Pre-built binaries
