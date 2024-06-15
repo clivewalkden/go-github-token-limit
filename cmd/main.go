@@ -10,11 +10,13 @@ import (
 	"go-github-token-limit/internal/githubapi"
 )
 
+var version = "none provided"
+
 func main() {
 	fmt.Print("\033[H\033[2J") //clear screen
 
 	utils.InfoNotice(`                   GitHub Token Limit Checker                   `)
-	utils.InfoNotice(`                             v1.1.2                             `)
+	utils.InfoNotice(fmt.Sprintf(`                             v%s                             `, version))
 	println("") // This is a placeholder for the main function
 
 	client := &http.Client{}
