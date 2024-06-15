@@ -4,5 +4,9 @@ import "strings"
 
 func CenterString(str string, width int) string {
 	spaces := int(float64(width-len(str)) / 2)
+	// If the string is longer than the width, return the string as is
+	if spaces < 0 {
+		return str
+	}
 	return strings.Repeat(" ", spaces) + str + strings.Repeat(" ", width-(spaces+len(str)))
 }
