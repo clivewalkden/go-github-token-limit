@@ -55,9 +55,9 @@ brews:
       - github-token-limit
     repository:
       owner: clivewalkden
-      name: homebrew-github-token-limit
+      name: homebrew-taps
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
-    homepage: https://github.com/clivewalkden/homebrew-github-token-limit
+    homepage: https://github.com/clivewalkden/homebrew-taps
     description: This executable returns the number of requests remaining for the GitHub API. If there are no tokens left it gives the reset time.
     commit_author:
       name: Clive Walkden
@@ -70,6 +70,7 @@ changelog:
     exclude:
       - '^test:'
       - '^chore'
+      - '^build'
       - 'merge conflict'
       - Merge pull request
       - Merge remote-tracking branch
