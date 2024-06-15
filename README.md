@@ -6,9 +6,20 @@
 
 This executable returns the number of requests remaining for the GitHub API. If there are no tokens left it gives the reset time.
 
-## Run
+## Installation
 
-`go run cmd/main.go`
+### Pre-built binaries
+Pre-built binaries are available on the [releases page](https://github.com/clivewalkden/go-github-token-limit/releases/latest).
+
+Simply download the binary for your platform and run it.
+
+### Homebrew
+
+Install with Homebrew on macOS (or Linux with Homebrew installed):
+```shell
+brew tap clivewalkden/github-token-limit
+brew install github-token-limit
+```
 
 ## Versioning
 
