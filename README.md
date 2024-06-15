@@ -19,7 +19,7 @@ Simply download the binary for your platform and run it.
 
 Install with Homebrew on macOS (or Linux with Homebrew installed):
 ```shell
-brew tap clivewalkden/github-token-limit
+brew tap clivewalkden/taps
 brew install github-token-limit
 ```
 
