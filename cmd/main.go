@@ -14,10 +14,10 @@ var version = "none provided"
 
 func main() {
 	fmt.Print("\033[H\033[2J") //clear screen
-
-	utils.InfoNotice(`                   GitHub Token Limit Checker                   `)
-	utils.InfoNotice(fmt.Sprintf(`                             v%s                             `, version))
-	println("") // This is a placeholder for the main function
+	println("")
+	utils.InfoNotice(`GitHub Token Limit Checker`)
+	utils.InfoNotice(fmt.Sprintf(`v%s`, version))
+	println("")
 
 	client := &http.Client{}
 	token := os.Getenv(githubapi.TokenEnvName)
@@ -33,11 +33,12 @@ func main() {
 	//fmt.Printf("%+v\n", core)
 
 	if core.Remaining > 0 {
-		utils.InfoNotice(fmt.Sprintf("     You have %d/%d requests left this hour", core.Remaining, core.Limit))
+		utils.SuccessNotice(fmt.Sprintf("You have %d/%d requests left this hour", core.Remaining, core.Limit))
 	} else {
 		now := time.Now()
 		durationUntilReset := resetTime.Sub(now).Minutes()
-		utils.InfoNotice(fmt.Sprintf("     You have no requests left. The limit will reset in %.0f minutes at %s", durationUntilReset, resetTime))
+		utils.CautionNotice("You have no requests left.")
+		utils.CautionNotice(fmt.Sprintf("The limit will reset in %.0f minutes at %s", durationUntilReset, resetTime))
 	}
 	println("")
 }
