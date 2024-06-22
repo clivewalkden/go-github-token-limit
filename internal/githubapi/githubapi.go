@@ -4,14 +4,44 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 )
 
 var (
-	APIURL       = "https://api.github.com/rate_limit"
-	AuthHeader   = "Authorization"
-	TokenEnvName = "GITHUB_TOKEN"
+	APIURL          = "https://api.github.com/rate_limit"
+	AuthHeader      = "Authorization"
+	DefaultTokenEnv = "GITHUB_TOKEN"
 )
+
+var TokenEnvNames = []string{
+	"GITHUB_TOKEN",
+	"GH_TOKEN",
+	"GITHUB_ACCESS_TOKEN",
+	"GH_ACCESS_TOKEN",
+	"GITHUB_OAUTH_TOKEN",
+	"GH_OAUTH_TOKEN",
+	"GITHUB_PAT",
+	"GH_PAT",
+	"GITHUB_AUTH_TOKEN",
+	"GH_AUTH_TOKEN",
+	"GITHUB_API_TOKEN",
+	"GH_API_TOKEN",
+	"GITHUB_API_KEY",
+	"GH_API_KEY",
+	"GITHUB_PERSONAL_ACCESS_TOKEN",
+	"GH_PERSONAL_ACCESS_TOKEN",
+	"GITHUB_PERSONAL_TOKEN",
+	"GH_PERSONAL_TOKEN",
+	"GITHUB_PERSONAL_API_TOKEN",
+	"GH_PERSONAL_API_TOKEN",
+	"GITHUB_PERSONAL_API_KEY",
+	"GH_PERSONAL_API_KEY",
+	"GITHUB_APP_TOKEN",
+	"GH_APP_TOKEN",
+	"GITHUB_APP_KEY",
+	"GH_APP_KEY",
+}
 
 type Rate struct {
 	Limit     int       `json:"limit"`
@@ -81,4 +111,13 @@ func FetchRateLimit(client *http.Client, token string) (RateLimitResponse, error
 	}
 
 	return rateLimitResponse, nil
+}
+
+func GetGithubTokenFromEnv() string {
+	for _, envName := range TokenEnvNames {
+		if token := os.Getenv(envName); token != "" {
+			return token
+		}
+	}
+	return ""
 }

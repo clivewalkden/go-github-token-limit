@@ -10,3 +10,11 @@ func CenterString(str string, width int) string {
 	}
 	return strings.Repeat(" ", spaces) + str + strings.Repeat(" ", width-(spaces+len(str)))
 }
+
+// ObscureToken Obscure a token by replacing the middle characters with "..."
+func ObscureToken(token string) string {
+	if len(token) < 8 {
+		return token
+	}
+	return token[:12] + "..." + token[len(token)-4:]
+}

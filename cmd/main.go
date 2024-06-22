@@ -20,7 +20,7 @@ func main() {
 	println("")
 
 	client := &http.Client{}
-	token := os.Getenv(githubapi.TokenEnvName)
+	token := githubapi.GetGithubTokenFromEnv()
 
 	rateLimitResponse, err := githubapi.FetchRateLimit(client, token)
 	if err != nil {
@@ -30,13 +30,15 @@ func main() {
 
 	// Default limit is 60 if no token is provided
 	if rateLimitResponse.Resources.Core.Limit == 60 {
-		utils.CautionNotice("Please provide a GitHub token to in the environment variable " + githubapi.TokenEnvName + ".")
+		utils.CautionNotice("Please provide a GitHub token to in the environment variable " + githubapi.DefaultTokenEnv + ".")
 		os.Exit(3)
 	}
 
 	core := rateLimitResponse.Resources.Core
 	resetTime := core.Reset.Time
 	//fmt.Printf("%+v\n", core)
+
+	utils.SuccessNotice(fmt.Sprintf("Using token: %s", utils.ObscureToken(token)))
 
 	if core.Remaining > 0 {
 		utils.SuccessNotice(fmt.Sprintf("You have %d/%d requests left this hour", core.Remaining, core.Limit))
