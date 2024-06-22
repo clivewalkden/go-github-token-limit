@@ -23,6 +23,48 @@ brew tap clivewalkden/taps
 brew install github-token-limit
 ```
 
+## Usage
+The application is a command line application and will try to find the GitHub token in the following environment variables:
+* GITHUB_TOKEN
+* GITHUB_TOKEN
+* GH_TOKEN
+* GITHUB_ACCESS_TOKEN
+* GH_ACCESS_TOKEN
+* GITHUB_OAUTH_TOKEN
+* GH_OAUTH_TOKEN
+* GITHUB_PAT
+* GH_PAT
+* GITHUB_AUTH_TOKEN
+* GH_AUTH_TOKEN
+* GITHUB_API_TOKEN
+* GH_API_TOKEN
+* GITHUB_API_KEY
+* GH_API_KEY
+* GITHUB_PERSONAL_ACCESS_TOKEN
+* GH_PERSONAL_ACCESS_TOKEN
+* GITHUB_PERSONAL_TOKEN
+* GH_PERSONAL_TOKEN
+* GITHUB_PERSONAL_API_TOKEN
+* GH_PERSONAL_API_TOKEN
+* GITHUB_PERSONAL_API_KEY
+* GH_PERSONAL_API_KEY
+* GITHUB_APP_TOKEN
+* GH_APP_TOKEN
+* GITHUB_APP_KEY
+* GH_APP_KEY
+
+If the token is not found in any of these environment variables, the application will exit with an error.
+
+![No Token](./docs/github-token-checker-no-token.png)
+
+If the token is found, the application will check the quota and return the number of requests remaining.
+
+![Quote remaining](./docs/github-token-checker-success.png)
+
+If the token has no requests remaining, the application will return the reset time.
+
+![Quote reset](./docs/github-token-checker-none-left.png)
+
 ## Versioning
 
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see
