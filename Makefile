@@ -2,7 +2,8 @@
 
 GO_BIN=${GOROOT}/bin/go
 EXECUTABLE=github-token-limit
-VERSION=1.0.0
+VERSION=1.3.0
+FLAGS="-s -w -X main.version=${VERSION}"
 
 GO_MAJOR_VERSION = $(shell $(GO_BIN) version | cut -c 14- | cut -d' ' -f1 | cut -d'.' -f1)
 GO_MINOR_VERSION = $(shell $(GO_BIN) version | cut -c 14- | cut -d' ' -f1 | cut -d'.' -f2)
@@ -37,9 +38,9 @@ vet: fmt
 
 build: vet
 	echo "Compiling for every OS and Platform"
-	GOOS=freebsd GOARCH=amd64 ${GO_BIN} build -o bin/${VERSION}/${EXECUTABLE}-freebsd-amd64 ./cmd/main.go
-	GOOS=darwin GOARCH=amd64 ${GO_BIN} build -o bin/${VERSION}/${EXECUTABLE}-macos-amd64 ./cmd/main.go
-	GOOS=darwin GOARCH=arm64 ${GO_BIN} build -o bin/${VERSION}/${EXECUTABLE}-macos-arm64 ./cmd/main.go
-	GOOS=linux GOARCH=amd64 ${GO_BIN} build -o bin/${VERSION}/${EXECUTABLE}-linux-amd64 ./cmd/main.go
-	GOOS=windows GOARCH=amd64 ${GO_BIN} build -o bin/${VERSION}/${EXECUTABLE}-windows-amd64.exe ./cmd/main.go
+	GOOS=freebsd GOARCH=amd64 ${GO_BIN} build -ldflags ${FLAGS} -o bin/${VERSION}/${EXECUTABLE}-freebsd-amd64 ./cmd/main.go
+	GOOS=darwin GOARCH=amd64 ${GO_BIN} build -ldflags ${FLAGS} -o bin/${VERSION}/${EXECUTABLE}-macos-amd64 ./cmd/main.go
+	GOOS=darwin GOARCH=arm64 ${GO_BIN} build -ldflags ${FLAGS} -o bin/${VERSION}/${EXECUTABLE}-macos-arm64 ./cmd/main.go
+	GOOS=linux GOARCH=amd64 ${GO_BIN} build -ldflags ${FLAGS} -o bin/${VERSION}/${EXECUTABLE}-linux-amd64 ./cmd/main.go
+	GOOS=windows GOARCH=amd64 ${GO_BIN} build -ldflags ${FLAGS} -o bin/${VERSION}/${EXECUTABLE}-windows-amd64.exe ./cmd/main.go
 .PHONY:build
