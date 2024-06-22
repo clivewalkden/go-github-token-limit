@@ -38,6 +38,8 @@ func main() {
 	resetTime := core.Reset.Time
 	//fmt.Printf("%+v\n", core)
 
+	utils.SuccessNotice(fmt.Sprintf("Using token: %s", utils.ObscureToken(token)))
+
 	if core.Remaining > 0 {
 		utils.SuccessNotice(fmt.Sprintf("You have %d/%d requests left this hour", core.Remaining, core.Limit))
 	} else {

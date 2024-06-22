@@ -30,3 +30,13 @@ func TestCenterString_WithOddWidth(t *testing.T) {
 	result := CenterString("test", 11)
 	assert.Equal(t, "   test    ", result)
 }
+
+func TestObscureToken_WithShortToken(t *testing.T) {
+	result := ObscureToken("test")
+	assert.Equal(t, "test", result)
+}
+
+func TestObscureToken_WithLongToken(t *testing.T) {
+	result := ObscureToken("thisisaverylongtokenthisisaverylongtoken")
+	assert.Equal(t, "thisisaverylon...oken", result)
+}
