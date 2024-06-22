@@ -16,5 +16,5 @@ func ObscureToken(token string) string {
 	if len(token) < 8 {
 		return token
 	}
-	return token[:12] + "..." + token[len(token)-4:]
+	return token[:14] + "..." + token[len(token)-4:]
 }

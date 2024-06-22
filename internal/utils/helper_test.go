@@ -38,5 +38,5 @@ func TestObscureToken_WithShortToken(t *testing.T) {
 
 func TestObscureToken_WithLongToken(t *testing.T) {
 	result := ObscureToken("thisisaverylongtokenthisisaverylongtoken")
-	assert.Equal(t, "thisisaveryl...oken", result)
+	assert.Equal(t, "thisisaverylon...oken", result)
 }
