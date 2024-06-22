@@ -35,6 +35,9 @@ jobs:
             gotestsum --junitfile /tmp/test-reports/unit-tests.xml
       - store_test_results:
           path: /tmp/test-reports
+      - run:
+          name: Run tests and coverage
+          command: go test -race -coverprofile=coverage.out -covermode=atomic
       - codecov/upload
 
 # Invoke jobs via workflows
