@@ -25,12 +25,14 @@ func main() {
 	rateLimitResponse, err := githubapi.FetchRateLimit(client, token)
 	if err != nil {
 		utils.ErrorNotice(fmt.Sprintf("Error fetching rate limit: %v\n", err))
+		println("")
 		os.Exit(3)
 	}
 
 	// Default limit is 60 if no token is provided
 	if rateLimitResponse.Resources.Core.Limit == 60 {
 		utils.CautionNotice("Please provide a GitHub token to in the environment variable " + githubapi.DefaultTokenEnv + ".")
+		println("")
 		os.Exit(3)
 	}
 
