@@ -28,6 +28,12 @@ func main() {
 		os.Exit(3)
 	}
 
+	// Default limit is 60 if no token is provided
+	if rateLimitResponse.Resources.Core.Limit == 60 {
+		utils.CautionNotice("Please provide a GitHub token to in the environment variable " + githubapi.TokenEnvName + ".")
+		os.Exit(3)
+	}
+
 	core := rateLimitResponse.Resources.Core
 	resetTime := core.Reset.Time
 	//fmt.Printf("%+v\n", core)
