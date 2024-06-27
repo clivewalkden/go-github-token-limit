@@ -4,6 +4,6 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
-    target-branch: "development"
+    target-branch: "develop"
     labels:
       - "dependabot"
