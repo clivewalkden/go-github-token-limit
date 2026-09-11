@@ -1,8 +1,3 @@
-# This is an example .goreleaser.yml file with some sensible defaults.
-# Make sure to check the documentation at https://goreleaser.com
-
-# The lines below are called `modelines`. See `:help modeline`
-# Feel free to remove those if you don't want/need to use them.
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
 # vim: set ts=2 sw=2 tw=0 fo=cnqoj
 
@@ -10,58 +5,45 @@ version: 2
 
 before:
   hooks:
-    # You may remove this if you don't use go modules.
     - go mod tidy
 
 builds:
   - id: github-token-limit
-    main: ./cmd/main.go
+    main: ./cmd
     binary: github-token-limit
     env:
       - CGO_ENABLED=0
     goos:
       - linux
-      - windows
       - darwin
+      - windows
     goarch:
-      - 386
       - amd64
-      - arm
       - arm64
-    goarm:
-      - 6
-      - 7
     ignore:
-      - goos: darwin
-        goarch: 386
-      - goos: linux
-        goarch: arm
-        goarm: 6
-    ldflags: -s -w -X main.version={{.Version}}
+      - goos: windows
+        goarch: arm64
+    ldflags:
+      - -s -w
+      - -X 'main.Version={{.Version}}'
+      - -X 'main.Commit={{.ShortCommit}}'
+      - -X 'main.Date={{.Date}}'
+
+release:
+  github:
+    owner: clivewalkden
+    name: go-github-token-limit
 
 archives:
   - id: github-token-limit
-    builds:
-      - github-token-limit
-    format: tar.gz
-    # use zip for windows archives
+    name_template: "{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     format_overrides:
       - goos: windows
-        format: zip
+        formats:
+          - zip
 
-brews:
-  - name: github-token-limit
-    ids:
-      - github-token-limit
-    repository:
-      owner: clivewalkden
-      name: homebrew-taps
-      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
-    homepage: https://github.com/clivewalkden/homebrew-taps
-    description: This executable returns the number of requests remaining for the GitHub API. If there are no tokens left it gives the reset time.
-    commit_author:
-      name: Clive Walkden
-      email: clivewalkden@gmail.com
+checksum:
+  name_template: "checksums.txt"
 
 changelog:
   sort: asc
@@ -77,17 +59,49 @@ changelog:
       - Merge branch
       - go mod tidy
   groups:
-    - title: Dependency updates
-      regexp: "^.*feat\\(deps\\)*:+.*$"
-      order: 300
-    - title: 'New Features'
+    - title: New Features
       regexp: "^.*feat[(\\w)]*:+.*$"
       order: 100
-    - title: 'Bug fixes'
+    - title: Bug Fixes
       regexp: "^.*fix[(\\w)]*:+.*$"
       order: 200
-    - title: 'Documentation updates'
+    - title: Dependency Updates
+      regexp: "^.*feat\\(deps\\)*:+.*$"
+      order: 300
+    - title: Documentation
       regexp: "^.*docs[(\\w)]*:+.*$"
       order: 400
-    - title: Other work
+    - title: Other
       order: 9999
+
+nfpms:
+  - id: github-token-limit-deb
+    package_name: github-token-limit
+    vendor: Clive Walkden
+    homepage: https://github.com/clivewalkden/go-github-token-limit
+    maintainer: Clive Walkden <info@clivewalkden.com>
+    description: This executable returns the number of requests remaining for the GitHub API. If there are no tokens left it gives the reset time.
+    license: MIT
+    formats:
+      - deb
+    bindir: /usr/local/bin
+
+homebrew_casks:
+  - name: github-token-limit
+    ids:
+      - github-token-limit
+    repository:
+      owner: clivewalkden
+      name: homebrew-taps
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    homepage: https://github.com/clivewalkden/homebrew-taps
+    description: This executable returns the number of requests remaining for the GitHub API. If there are no tokens left it gives the reset time.
+    commit_author:
+      name: Clive Walkden
+      email: clivewalkden@gmail.com
+    hooks:
+      post:
+        install: |
+          if system_command("/usr/bin/xattr", args: ["-h"]).exit_status == 0
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/github-token-limit"]
+          end
