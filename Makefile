@@ -1,46 +1,65 @@
-.DEFAULT_GOAL := build
+BINARY  := github-token-limit
+OUTDIR  := bin
+VERSION ?= $(shell svu next 2>/dev/null || echo "dev")
+COMMIT  := $(shell git rev-parse --short HEAD 2>/dev/null || echo "none")
+DATE    := $(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
+LDFLAGS  = -s -w \
+           -X 'main.Version=$(VERSION)' \
+           -X 'main.Commit=$(COMMIT)' \
+           -X 'main.Date=$(DATE)'
 
-GO_BIN=${GOROOT}/bin/go
-EXECUTABLE=github-token-limit
-VERSION=1.3.0
-FLAGS="-s -w -X main.version=${VERSION}"
+.PHONY: all build snapshot changelog release finish-release lint lint-install fmt vet test test-race clean help
 
-GO_MAJOR_VERSION = $(shell $(GO_BIN) version | cut -c 14- | cut -d' ' -f1 | cut -d'.' -f1)
-GO_MINOR_VERSION = $(shell $(GO_BIN) version | cut -c 14- | cut -d' ' -f1 | cut -d'.' -f2)
-MINIMUM_SUPPORTED_GO_MAJOR_VERSION = 1
-MINIMUM_SUPPORTED_GO_MINOR_VERSION = 27
-GO_VERSION_VALIDATION_ERR_MSG = Golang version is not supported, please update to at least $(MINIMUM_SUPPORTED_GO_MAJOR_VERSION).$(MINIMUM_SUPPORTED_GO_MINOR_VERSION)
+all: build
 
-validate-go-version: ## Validates the installed version of go against Mattermost's minimum requirement.
-	@if [ $(GO_MAJOR_VERSION) -gt $(MINIMUM_SUPPORTED_GO_MAJOR_VERSION) ]; then \
-		exit 0 ;\
-	elif [ $(GO_MAJOR_VERSION) -lt $(MINIMUM_SUPPORTED_GO_MAJOR_VERSION) ]; then \
-		echo '$(GO_VERSION_VALIDATION_ERR_MSG)';\
-		exit 1; \
-	elif [ $(GO_MINOR_VERSION) -lt $(MINIMUM_SUPPORTED_GO_MINOR_VERSION) ] ; then \
-		echo '$(GO_VERSION_VALIDATION_ERR_MSG)';\
-		exit 1; \
+build: ## Build the binary into $(OUTDIR)/$(BINARY)
+	@mkdir -p $(OUTDIR)
+	@echo "Building $(BINARY) $(VERSION) → $(OUTDIR)/$(BINARY)"
+	@go build -v -ldflags "$(LDFLAGS)" -o $(OUTDIR)/$(BINARY) ./cmd
+
+snapshot: ## Build a local snapshot with GoReleaser (no git tag required)
+	goreleaser release --snapshot --clean
+
+changelog: ## Regenerate CHANGELOG.md from all commits
+	git-cliff --output CHANGELOG.md
+
+release: ## Cut a release branch: bumps version, updates CHANGELOG, commits, and pushes
+	go mod tidy
+	git flow release start $(VERSION)
+	git-cliff --tag $(VERSION) --unreleased --prepend CHANGELOG.md
+	git add CHANGELOG.md
+	git commit -m "chore: update changelog for $(VERSION)"
+	git push --set-upstream origin release/$(VERSION)
+
+finish-release: ## Finish the current git-flow release and push branches/tags
+	git flow release finish --fetch
+	git push -u origin --all
+	git push origin --tags
+	git checkout develop
+
+lint-install: ## Install golangci-lint compiled against the local Go toolchain (required for Go 1.26+)
+	go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
+
+lint: fmt vet ## Run linters (run make lint-install first if golangci-lint is missing or outdated)
+	@golangci-lint run ./...
+
+fmt: ## Check gofmt
+	@unfmt=$$(gofmt -l .); \
+	if [ -n "$$unfmt" ]; then \
+		echo "Files need gofmt:"; echo "$$unfmt"; exit 1; \
 	fi
 
-$(info Compiling with $(GOROOT))
+vet: ## Run go vet
+	@go vet ./...
 
-fmt: validate-go-version
-	${GO_BIN} fmt ./...
-.PHONY:fmt
+test: ## Run tests
+	@go test ./...
 
-lint: fmt
-	golangci-lint run ./...
-.PHONY:lint
+test-race: ## Run tests with the race detector enabled
+	@go test -race ./...
 
-vet: fmt
-	${GO_BIN} vet ./...
-.PHONY:vet
+clean: ## Remove built artifacts
+	@rm -rf $(OUTDIR)
 
-build: vet
-	echo "Compiling for every OS and Platform"
-	GOOS=freebsd GOARCH=amd64 ${GO_BIN} build -ldflags ${FLAGS} -o bin/${VERSION}/${EXECUTABLE}-freebsd-amd64 ./cmd/main.go
-	GOOS=darwin GOARCH=amd64 ${GO_BIN} build -ldflags ${FLAGS} -o bin/${VERSION}/${EXECUTABLE}-macos-amd64 ./cmd/main.go
-	GOOS=darwin GOARCH=arm64 ${GO_BIN} build -ldflags ${FLAGS} -o bin/${VERSION}/${EXECUTABLE}-macos-arm64 ./cmd/main.go
-	GOOS=linux GOARCH=amd64 ${GO_BIN} build -ldflags ${FLAGS} -o bin/${VERSION}/${EXECUTABLE}-linux-amd64 ./cmd/main.go
-	GOOS=windows GOARCH=amd64 ${GO_BIN} build -ldflags ${FLAGS} -o bin/${VERSION}/${EXECUTABLE}-windows-amd64.exe ./cmd/main.go
-.PHONY:build
+help: ## Show this help
+	@awk 'BEGIN {FS = ":.*##"; printf "Targets:\n"} /^[a-zA-Z0-9_\-]+:.*##/ { printf "  %-14s %s\n", $$1, $$2 }' Makefile
