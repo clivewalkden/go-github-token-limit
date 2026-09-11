@@ -48,7 +48,7 @@ func TestFetchRateLimit(t *testing.T) {
 	if core.Remaining != 4999 {
 		t.Errorf("Expected remaining to be 4999, got %d", core.Remaining)
 	}
-	if core.Reset.Time.Before(time.Now()) {
+	if core.Reset.Before(time.Now()) {
 		t.Errorf("Expected reset time to be in the future, got %s", core.Reset.Time)
 	}
 }
@@ -92,7 +92,7 @@ func TestFetchRateLimitReached(t *testing.T) {
 	if core.Remaining != 0 {
 		t.Errorf("Expected remaining to be 0, got %d", core.Remaining)
 	}
-	if core.Reset.Time.Before(time.Now()) {
+	if core.Reset.Before(time.Now()) {
 		t.Errorf("Expected reset time to be in the future, got %s", core.Reset.Time)
 	}
 }
@@ -136,7 +136,7 @@ func TestNoApiKeyRateLimit(t *testing.T) {
 	if core.Remaining != 59 {
 		t.Errorf("Expected remaining to be 59, got %d", core.Remaining)
 	}
-	if core.Reset.Time.Before(time.Now()) {
+	if core.Reset.Before(time.Now()) {
 		t.Errorf("Expected reset time to be in the future, got %s", core.Reset.Time)
 	}
 }
