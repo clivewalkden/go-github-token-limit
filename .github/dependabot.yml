@@ -7,3 +7,11 @@ updates:
     target-branch: "develop"
     labels:
       - "dependabot"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    target-branch: "develop"
+    labels:
+      - "dependabot"

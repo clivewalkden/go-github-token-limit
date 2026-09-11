@@ -2,7 +2,7 @@
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/clivewalkden/go-github-token-limit/badges/quality-score.png?b=main)](https://scrutinizer-ci.com/g/clivewalkden/go-github-token-limit/?branch=main)
 [![Build Status](https://scrutinizer-ci.com/g/clivewalkden/go-github-token-limit/badges/build.png?b=main)](https://scrutinizer-ci.com/g/clivewalkden/go-github-token-limit/build-status/main)
-[![CircleCI](https://dl.circleci.com/status-badge/img/gh/clivewalkden/go-github-token-limit/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/clivewalkden/go-github-token-limit/tree/main)
+[![CI](https://github.com/clivewalkden/go-github-token-limit/actions/workflows/ci.yml/badge.svg)](https://github.com/clivewalkden/go-github-token-limit/actions/workflows/ci.yml)
 
 This executable returns the number of requests remaining for the GitHub API. If there are no tokens left it gives the reset time.
 

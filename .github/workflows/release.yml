@@ -1,0 +1,65 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-go@v7
+        with:
+          go-version: 'stable'
+
+      - name: Install git-cliff
+        uses: kenji-miyake/setup-git-cliff@v2
+
+      - name: Generate release notes
+        run: git-cliff --latest -o /tmp/release-notes.md
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v7
+        with:
+          distribution: goreleaser
+          version: '~> v2'
+          args: release --clean --release-notes /tmp/release-notes.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GO_GITHUB_TOKEN_LIMIT_GITHUB_TOKEN }}
+          HOMEBREW_TAP_GITHUB_TOKEN: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }}
+
+      - name: Upload .deb packages to APT repository
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+        run: |
+          PACKAGE=github-token-limit
+          FIRST_LETTER=g
+          for arch in amd64 arm64; do
+            deb=$(ls dist/${PACKAGE}_*_linux_${arch}.deb 2>/dev/null | head -1)
+            if [ -n "$deb" ]; then
+              aws s3 cp "$deb" \
+                "s3://${R2_BUCKET}/pool/main/${FIRST_LETTER}/${PACKAGE}/$(basename $deb)" \
+                --endpoint-url "https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com" \
+                --region auto \
+                --no-progress
+            fi
+          done
+
+      - name: Trigger APT repository rebuild
+        run: |
+          curl -s -X POST \
+            -H "Authorization: token ${{ secrets.REPO_DISPATCH_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/clivewalkden/apt-repo/dispatches \
+            -d '{"event_type":"deb-uploaded","client_payload":{"project":"github-token-limit"}}'
