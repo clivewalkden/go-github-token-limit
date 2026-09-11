@@ -14,6 +14,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Documentation
 
 - Add CLAUDE.md project guidance
+- Add CHANGELOG.md generation via git-cliff
+
+### Features
+
+- Updated golang sys from version v0.18.0 to v0.21.0
+
+### Fixes
+
+- Corrected dependabot target-branch
+- Resolve golangci-lint findings
+
+## [1.4.0] - 2026-09-11
+
+### Dependencies
+
+- Update dependencies
+
+### Documentation
+
+- Add CLAUDE.md project guidance
 
 ### Features
 
